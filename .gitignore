@@ -83,3 +83,4 @@ vite.config.local-dev.ts.timestamp-*
 
 
 default.yml
+compose.yml
