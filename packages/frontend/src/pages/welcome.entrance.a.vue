@@ -4,69 +4,57 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-	<div v-if="meta" :class="$style.root">
-		<MkFeaturedPhotos :class="$style.bg" />
-		<div :class="$style.shape1"></div>
-		<div :class="$style.shape2"></div>
-		<div :class="$style.logoWrapper">
-			<div :class="$style.poweredBy">Powered by</div>
-			<img :src="misskeysvg" :class="$style.misskey" />
-		</div>
-		<div :class="$style.contents">
-			<MkVisitorDashboard />
-		</div>
-		<div v-if="instances && instances.length > 0" :class="$style.federation">
-			<MarqueeText :duration="40">
-				<MkA
-					v-for="instance in instances"
-					:key="instance.id"
-					:class="$style.federationInstance"
-					:to="`/instance-info/${instance.host}`"
-					behavior="window"
-				>
-					<!--<MkInstanceCardMini :instance="instance"/>-->
-					<img
-						v-if="instance.iconUrl"
-						:class="$style.federationInstanceIcon"
-						:src="getInstanceIcon(instance)"
-						alt=""
-					/>
-					<span class="_monospace">{{ instance.host }}</span>
-				</MkA>
-			</MarqueeText>
-		</div>
+<div v-if="meta" :class="$style.root">
+	<MkFeaturedPhotos :class="$style.bg"/>
+	<XTimeline :class="$style.tl"/>
+	<div :class="$style.shape1"></div>
+	<div :class="$style.shape2"></div>
+	<div :class="$style.logoWrapper">
+		<div :class="$style.poweredBy">Powered by</div>
+		<img :src="misskeysvg" :class="$style.misskey"/>
 	</div>
+	<div :class="$style.contents">
+		<MkVisitorDashboard/>
+	</div>
+	<div v-if="instances && instances.length > 0" :class="$style.federation">
+		<MarqueeText :duration="40">
+			<MkA v-for="instance in instances" :key="instance.id" :class="$style.federationInstance" :to="`/instance-info/${instance.host}`" behavior="window">
+				<!--<MkInstanceCardMini :instance="instance"/>-->
+				<img v-if="instance.iconUrl" :class="$style.federationInstanceIcon" :src="getInstanceIcon(instance)" alt=""/>
+				<span class="_monospace">{{ instance.host }}</span>
+			</MkA>
+		</MarqueeText>
+	</div>
+</div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import * as Misskey from "misskey-js";
-// import XTimeline from './welcome.timeline.vue';
-import MarqueeText from "@/components/MkMarquee.vue";
-import MkFeaturedPhotos from "@/components/MkFeaturedPhotos.vue";
-import misskeysvg from "/client-assets/misskey.svg";
-import { misskeyApiGet } from "@/utility/misskey-api.js";
-import MkVisitorDashboard from "@/components/MkVisitorDashboard.vue";
-import { getProxiedImageUrl } from "@/utility/media-proxy.js";
-import { instance as meta } from "@/instance.js";
+import { ref } from 'vue';
+import * as Misskey from 'misskey-js';
+import XTimeline from './welcome.timeline.vue';
+import MarqueeText from '@/components/MkMarquee.vue';
+import MkFeaturedPhotos from '@/components/MkFeaturedPhotos.vue';
+import misskeysvg from '/client-assets/misskey.svg';
+import { misskeyApiGet } from '@/utility/misskey-api.js';
+import MkVisitorDashboard from '@/components/MkVisitorDashboard.vue';
+import { getProxiedImageUrl } from '@/utility/media-proxy.js';
+import { instance as meta } from '@/instance.js';
 
 const instances = ref<Misskey.entities.FederationInstance[]>();
 
-function getInstanceIcon(
-	instance: Misskey.entities.FederationInstance,
-): string {
+function getInstanceIcon(instance: Misskey.entities.FederationInstance): string {
 	if (!instance.iconUrl) {
-		return "";
+		return '';
 	}
 
-	return getProxiedImageUrl(instance.iconUrl, "preview");
+	return getProxiedImageUrl(instance.iconUrl, 'preview');
 }
 
-misskeyApiGet("federation/instances", {
-	sort: "+pubSub",
+misskeyApiGet('federation/instances', {
+	sort: '+pubSub',
 	limit: 20,
-	blocked: "false",
-}).then((_instances) => {
+	blocked: 'false',
+}).then(_instances => {
 	instances.value = _instances;
 });
 </script>
@@ -96,20 +84,8 @@ misskeyApiGet("federation/instances", {
 	width: 500px;
 	height: calc(100% - 256px);
 	overflow: hidden;
-	-webkit-mask-image: linear-gradient(
-		0deg,
-		rgba(0, 0, 0, 0) 0%,
-		rgba(0, 0, 0, 1) 128px,
-		rgba(0, 0, 0, 1) calc(100% - 128px),
-		rgba(0, 0, 0, 0) 100%
-	);
-	mask-image: linear-gradient(
-		0deg,
-		rgba(0, 0, 0, 0) 0%,
-		rgba(0, 0, 0, 1) 128px,
-		rgba(0, 0, 0, 1) calc(100% - 128px),
-		rgba(0, 0, 0, 0) 100%
-	);
+	-webkit-mask-image: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 128px, rgba(0,0,0,1) calc(100% - 128px), rgba(0,0,0,0) 100%);
+	mask-image: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 128px, rgba(0,0,0,1) calc(100% - 128px), rgba(0,0,0,0) 100%);
 
 	@media (max-width: 1200px) {
 		display: none;
